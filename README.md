@@ -2,23 +2,30 @@
 # fromorc
 
 commandline tool that will get you simplified trail conditions from the morc
-website.
+website trail conditions https://trails.morcmtb.org.
 
+## Install
 
-# scratch notes
+1. TBD (need to add zsh function setup)
 
-echo $'\360\237\221\216'
-👎
-echo $'\360\237\221\215'
-👍
-echo $'\360\237\244\236'
-🤞
+## Features
 
+### List all trails with status
 
-curl -s https://api.morcmtb.org/v1/trails | jq '.[]|{name: .trailName, status: .trailStatus, updated: .updatedAt}'
+```
+./fromorc.sh
+```
 
+#### Outputs
 
-# Acknowledgement
+* trail name
+* emoji to indicate status: open(👍) or closed(👎)
+* emoji to indicate how fresh the status is:
+  * ✅ no more than two days old 
+  * 🤞 between 2 days and a week
+  * 💩 older than a week
+
+## Acknowledgment
 
 Taking inspiration from [dtanner](https://gist.github.com/dtanner/54b10ef8932b026afec0398495b5b2b5).
 
