@@ -103,19 +103,11 @@ function rateUpdated()
   echo ""
 }
 
-# parse millis to date
-# date -r $((1607721206257 / 1000)) 
-# get current time in millis
-# echo $(($(date +'%s * 1000 + %-N / 1000000'))) 
 
-# echo "$(getTrailName 0) - $(getTrailStatus 0) - $(getUpdatedAt 0)"
 
 ALL_TRAILS="$(getTrails)"
 
 
-#echo "count $(trailCount) ##"
-#echo "names $(getTrailNames) ##"
- #
  endIndex=$(expr $(trailCount) - 1)
  for num in $(seq 0 $endIndex); do
    echo -e "$(getTrailName $num) - $(getThumb $(getTrailStatus $num)) - $(rateUpdated $(getUpdatedAt $num))";
