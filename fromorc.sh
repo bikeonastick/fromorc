@@ -109,4 +109,15 @@ function fromorc()
   done
 }
 
+if ! command -v jq &> /dev/null
+then
+  echo ""
+  echo "command jq not found, it's required to run this script." 
+  echo ""
+  echo "install jq via homebrew: brew install jq"
+  echo ""
+  exit -1
+fi
+
+
 fromorc
