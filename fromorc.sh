@@ -1,14 +1,16 @@
-#!/usr/bin/env bash
 
-THUMBS_DOWN="\xF0\x9F\x91\x8E"
-THUMBS_UP="\xF0\x9F\x91\x8D"
+ALL_TRAILS=''
 
-#WHITE_HEAVY_CHECK_MARK
-GOOD="\xe2\x9c\x85"
-#CROSSED_FINGERS
-MAYBE="\xf0\x9f\xa4\x9e"
-#POOP
-FUHGETABOUTIT="\xf0\x9f\x92\xa9"
+  THUMBS_DOWN='\xF0\x9F\x91\x8E'
+  THUMBS_UP='\xF0\x9F\x91\x8D'
+
+  #WHITE_HEAVY_CHECK_MARK
+  GOOD='\xe2\x9c\x85'
+  #CROSSED_FINGERS
+  MAYBE='\xf0\x9f\xa4\x9e'
+  #POOP
+  FUHGETABOUTIT='\xf0\x9f\x92\xa9'
+
 
 
 function strQuotes()
@@ -73,22 +75,12 @@ function getValAt()
   echo "$name"
 }
 
-function getTrailNames()
-{
-  if [ -z "$ALL_TRAILS" ]; then
-    ALL_TRAILS=$(getTrails)
-  fi
-  local trailNames=`echo $ALL_TRAILS | jq ".[].trailName"`
-  echo "$trailNames"
-}
-
 function rateUpdated()
 {
   local updatedAt=$1
   local current=$(($(date +'%s * 1000 + %-N / 1000000'))) 
   local diff_milli=$(expr $current - $1)
   # updated in 
-  # last 48 hrs - good
   if [[ $diff_milli -le $(( 1000 * 60 * 60 * 48 )) ]]
   then
     echo "$GOOD"
@@ -103,12 +95,18 @@ function rateUpdated()
   echo ""
 }
 
+function fromorc()
+{
 
+  ALL_TRAILS="$(getTrails)"
 
-ALL_TRAILS="$(getTrails)"
+  endIndex=$(expr $(trailCount) - 1)
+  for num in $(seq 0 $endIndex); do
+    local trail_name=$(getTrailName $num)
+    local trail_status=$(getThumb $(getTrailStatus $num))
+    local updated=$(rateUpdated $(getUpdatedAt $num))
+    echo "$trail_name - $trail_status - $updated";
+  done
+}
 
-
- endIndex=$(expr $(trailCount) - 1)
- for num in $(seq 0 $endIndex); do
-   echo -e "$(getTrailName $num) - $(getThumb $(getTrailStatus $num)) - $(rateUpdated $(getUpdatedAt $num))";
- done
+fromorc
