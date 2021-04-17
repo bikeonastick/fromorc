@@ -1,15 +1,16 @@
+#! /usr/bin/env zsh
 
 ALL_TRAILS=''
 
-  THUMBS_DOWN='\xF0\x9F\x91\x8E'
-  THUMBS_UP='\xF0\x9F\x91\x8D'
+THUMBS_DOWN='\xF0\x9F\x91\x8E'
+THUMBS_UP='\xF0\x9F\x91\x8D'
 
-  #WHITE_HEAVY_CHECK_MARK
-  GOOD='\xe2\x9c\x85'
-  #CROSSED_FINGERS
-  MAYBE='\xf0\x9f\xa4\x9e'
-  #POOP
-  FUHGETABOUTIT='\xf0\x9f\x92\xa9'
+#WHITE_HEAVY_CHECK_MARK
+GOOD='\xe2\x9c\x85'
+#CROSSED_FINGERS
+MAYBE='\xf0\x9f\xa4\x9e'
+#POOP
+FUHGETABOUTIT='\xf0\x9f\x92\xa9'
 
 
 
@@ -23,7 +24,7 @@ function strQuotes()
 function getThumb()
 {
   local arg=$(strQuotes $1)
-  if [ $arg == 'Open' ]
+  if [[ "Open" == $arg ]]
   then
     echo "$THUMBS_UP"
   else
@@ -33,13 +34,18 @@ function getThumb()
 
 function getTrails() 
 {
-  local trails=`curl -s https://api.morcmtb.org/v1/trails | jq '.'`
-  echo "$trails"
+  if [ -z "$ALL_TRAILS" ]; then
+    ALL_TRAILS=`curl -s https://api.morcmtb.org/v1/trails | jq 'map({trailName: .trailName, updatedAt:.updatedAt, trailStatus: .trailStatus})'`
+  fi
+  echo "$ALL_TRAILS"
 }
 
 function trailCount()
 {
-  local count=`curl -s https://api.morcmtb.org/v1/trails | jq length`
+  if [ -z "$ALL_TRAILS" ]; then
+    ALL_TRAILS=$(getTrails)
+  fi
+  local count=`echo $ALL_TRAILS | jq length`
   echo "$count"
 }
 
@@ -97,6 +103,15 @@ function rateUpdated()
 
 function fromorc()
 {
+  if ! command -v jq &> /dev/null
+  then
+    echo ""
+    echo "command jq not found, it's required to run this script." 
+    echo ""
+    echo "install jq via homebrew: brew install jq"
+    echo ""
+    exit -1
+  fi
 
   ALL_TRAILS="$(getTrails)"
 
@@ -108,16 +123,5 @@ function fromorc()
     echo "$trail_name - $trail_status - $updated";
   done
 }
-
-if ! command -v jq &> /dev/null
-then
-  echo ""
-  echo "command jq not found, it's required to run this script." 
-  echo ""
-  echo "install jq via homebrew: brew install jq"
-  echo ""
-  exit -1
-fi
-
 
 fromorc
